@@ -119,7 +119,9 @@
           </template>
 
           <template #cell-name="{ value }">
-            <span class="font-medium text-gray-900 dark:text-white">{{ value }}</span>
+            <div class="flex items-center gap-2">
+              <span class="font-medium text-gray-900 dark:text-white">{{ value }}</span>
+            </div>
           </template>
 
           <template #cell-protocol="{ value }">
@@ -166,7 +168,9 @@
           <template #cell-auth="{ row }">
             <div v-if="row.username || row.password" class="flex items-center gap-1.5">
               <div class="flex flex-col text-xs">
-                <span v-if="row.username" class="text-gray-700 dark:text-gray-200">{{ row.username }}</span>
+                <span v-if="row.username" class="text-gray-700 dark:text-gray-200">
+                  {{ row.username }}
+                </span>
                 <span v-if="row.password" class="font-mono text-gray-500 dark:text-gray-400">
                   {{ visiblePasswordIds.has(row.id) ? row.password : '••••••' }}
                 </span>
@@ -471,7 +475,7 @@
             v-model="createForm.username"
             type="text"
             class="input"
-            :placeholder="t('admin.proxies.optionalAuth')"
+            :placeholder="t('admin.proxies.usernamePlaceholder')"
           />
         </div>
         <div>
@@ -700,7 +704,12 @@
         </div>
         <div>
           <label class="input-label">{{ t('admin.proxies.username') }}</label>
-          <input v-model="editForm.username" type="text" class="input" />
+          <input
+            v-model="editForm.username"
+            type="text"
+            class="input"
+            :placeholder="t('admin.proxies.usernamePlaceholder')"
+          />
         </div>
         <div>
           <label class="input-label">{{ t('admin.proxies.password') }}</label>

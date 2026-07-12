@@ -1032,6 +1032,15 @@ func (a *Account) GetTypeSafeAPIKey() string {
 	return strings.TrimSpace(a.GetCredential("api_key"))
 }
 
+// ProxyURL returns the outbound proxy URL for this account.
+// Resin proxies expand auth to Platform.{accountID}; other proxies use static credentials.
+func (a *Account) ProxyURL() string {
+	if a == nil || a.Proxy == nil {
+		return ""
+	}
+	return a.Proxy.URLForAccount(a.ID)
+}
+
 func (a *Account) GetExtraString(key string) string {
 	if a.Extra == nil {
 		return ""

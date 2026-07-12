@@ -1856,7 +1856,7 @@ func (s *OpenAIGatewayService) forwardOpenAIImagesOAuth(
 
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 	upstreamStart := time.Now()
 	resp, err := s.doOpenAIUpstream(upstreamReq, proxyURL, account)
