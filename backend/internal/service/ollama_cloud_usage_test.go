@@ -924,7 +924,7 @@ func TestOllamaCloudUsageRefreshUsesHydratedProxyIdentity(t *testing.T) {
 	account.ProxyID = &proxyID
 	account.Proxy = &Proxy{
 		ID: proxyID, Protocol: "http", Host: "127.0.0.1", Port: 3128,
-		Username: "proxy-user", Password: "proxy-pass", Status: StatusActive,
+		Username: "proxy.<accountid>", Password: "proxy-pass", Status: StatusActive,
 	}
 	repo := &ollamaUsageTestRepo{upstreamBillingProbeAccountRepo: &upstreamBillingProbeAccountRepo{accounts: map[int64]*Account{13: account}}}
 	upstream := &ollamaUsageHTTPStub{body: ollamaUsageFixture(t)}
@@ -932,7 +932,7 @@ func TestOllamaCloudUsageRefreshUsesHydratedProxyIdentity(t *testing.T) {
 
 	_, err := svc.Refresh(context.Background(), 13)
 	require.NoError(t, err)
-	require.Equal(t, account.Proxy.URL(), upstream.lastProxyURL)
+	require.Equal(t, "http://proxy.13:proxy-pass@127.0.0.1:3128", upstream.lastProxyURL)
 }
 
 func TestOllamaCloudUsageRedirectAndBodyLimitArePersistedSafely(t *testing.T) {
