@@ -896,6 +896,16 @@ func (a *Account) GetGeminiBaseURL(defaultBaseURL string) string {
 	return baseURL
 }
 
+
+// ProxyURL returns the outbound proxy URL for this account.
+// Resin proxies expand auth to Platform.{accountID}; other proxies use static credentials.
+func (a *Account) ProxyURL() string {
+	if a == nil || a.Proxy == nil {
+		return ""
+	}
+	return a.Proxy.URLForAccount(a.ID)
+}
+
 func (a *Account) GetExtraString(key string) string {
 	if a.Extra == nil {
 		return ""

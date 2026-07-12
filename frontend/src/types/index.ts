@@ -774,6 +774,7 @@ export interface Proxy {
   fallback_mode: 'none' | 'proxy' | 'direct'
   backup_proxy_id?: number | null
   expiry_warn_days: number
+  is_resin?: boolean
   created_at: string
   updated_at: string
 }
@@ -1177,6 +1178,7 @@ export interface CreateProxyRequest {
   fallback_mode?: 'none' | 'proxy' | 'direct'
   backup_proxy_id?: number | null
   expiry_warn_days?: number
+  is_resin?: boolean
 }
 
 export interface UpdateProxyRequest {
@@ -1191,6 +1193,7 @@ export interface UpdateProxyRequest {
   fallback_mode?: 'none' | 'proxy' | 'direct'
   backup_proxy_id?: number | null
   expiry_warn_days?: number
+  is_resin?: boolean
 }
 
 export interface AdminDataPayload {
@@ -1212,6 +1215,7 @@ export interface AdminDataProxy {
   username?: string | null
   password?: string | null
   status: 'active' | 'inactive'
+  is_resin?: boolean
 }
 
 export interface AdminDataAccount {

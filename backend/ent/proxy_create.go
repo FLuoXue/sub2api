@@ -187,6 +187,20 @@ func (_c *ProxyCreate) SetNillableExpiryWarnDays(v *int) *ProxyCreate {
 	return _c
 }
 
+// SetIsResin sets the "is_resin" field.
+func (_c *ProxyCreate) SetIsResin(v bool) *ProxyCreate {
+	_c.mutation.SetIsResin(v)
+	return _c
+}
+
+// SetNillableIsResin sets the "is_resin" field if the given value is not nil.
+func (_c *ProxyCreate) SetNillableIsResin(v *bool) *ProxyCreate {
+	if v != nil {
+		_c.SetIsResin(*v)
+	}
+	return _c
+}
+
 // AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
 func (_c *ProxyCreate) AddAccountIDs(ids ...int64) *ProxyCreate {
 	_c.mutation.AddAccountIDs(ids...)
@@ -270,6 +284,10 @@ func (_c *ProxyCreate) defaults() error {
 		v := proxy.DefaultExpiryWarnDays
 		_c.mutation.SetExpiryWarnDays(v)
 	}
+	if _, ok := _c.mutation.IsResin(); !ok {
+		v := proxy.DefaultIsResin
+		_c.mutation.SetIsResin(v)
+	}
 	return nil
 }
 
@@ -336,6 +354,9 @@ func (_c *ProxyCreate) check() error {
 	}
 	if _, ok := _c.mutation.ExpiryWarnDays(); !ok {
 		return &ValidationError{Name: "expiry_warn_days", err: errors.New(`ent: missing required field "Proxy.expiry_warn_days"`)}
+	}
+	if _, ok := _c.mutation.IsResin(); !ok {
+		return &ValidationError{Name: "is_resin", err: errors.New(`ent: missing required field "Proxy.is_resin"`)}
 	}
 	return nil
 }
@@ -415,6 +436,10 @@ func (_c *ProxyCreate) createSpec() (*Proxy, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.ExpiryWarnDays(); ok {
 		_spec.SetField(proxy.FieldExpiryWarnDays, field.TypeInt, value)
 		_node.ExpiryWarnDays = value
+	}
+	if value, ok := _c.mutation.IsResin(); ok {
+		_spec.SetField(proxy.FieldIsResin, field.TypeBool, value)
+		_node.IsResin = value
 	}
 	if nodes := _c.mutation.AccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -699,6 +724,18 @@ func (u *ProxyUpsert) AddExpiryWarnDays(v int) *ProxyUpsert {
 	return u
 }
 
+// SetIsResin sets the "is_resin" field.
+func (u *ProxyUpsert) SetIsResin(v bool) *ProxyUpsert {
+	u.Set(proxy.FieldIsResin, v)
+	return u
+}
+
+// UpdateIsResin sets the "is_resin" field to the value that was provided on create.
+func (u *ProxyUpsert) UpdateIsResin() *ProxyUpsert {
+	u.SetExcluded(proxy.FieldIsResin)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -972,6 +1009,20 @@ func (u *ProxyUpsertOne) AddExpiryWarnDays(v int) *ProxyUpsertOne {
 func (u *ProxyUpsertOne) UpdateExpiryWarnDays() *ProxyUpsertOne {
 	return u.Update(func(s *ProxyUpsert) {
 		s.UpdateExpiryWarnDays()
+	})
+}
+
+// SetIsResin sets the "is_resin" field.
+func (u *ProxyUpsertOne) SetIsResin(v bool) *ProxyUpsertOne {
+	return u.Update(func(s *ProxyUpsert) {
+		s.SetIsResin(v)
+	})
+}
+
+// UpdateIsResin sets the "is_resin" field to the value that was provided on create.
+func (u *ProxyUpsertOne) UpdateIsResin() *ProxyUpsertOne {
+	return u.Update(func(s *ProxyUpsert) {
+		s.UpdateIsResin()
 	})
 }
 
@@ -1414,6 +1465,20 @@ func (u *ProxyUpsertBulk) AddExpiryWarnDays(v int) *ProxyUpsertBulk {
 func (u *ProxyUpsertBulk) UpdateExpiryWarnDays() *ProxyUpsertBulk {
 	return u.Update(func(s *ProxyUpsert) {
 		s.UpdateExpiryWarnDays()
+	})
+}
+
+// SetIsResin sets the "is_resin" field.
+func (u *ProxyUpsertBulk) SetIsResin(v bool) *ProxyUpsertBulk {
+	return u.Update(func(s *ProxyUpsert) {
+		s.SetIsResin(v)
+	})
+}
+
+// UpdateIsResin sets the "is_resin" field to the value that was provided on create.
+func (u *ProxyUpsertBulk) UpdateIsResin() *ProxyUpsertBulk {
+	return u.Update(func(s *ProxyUpsert) {
+		s.UpdateIsResin()
 	})
 }
 

@@ -34650,6 +34650,7 @@ type ProxyMutation struct {
 	fallback_mode       *string
 	expiry_warn_days    *int
 	addexpiry_warn_days *int
+	is_resin            *bool
 	clearedFields       map[string]struct{}
 	accounts            map[int64]struct{}
 	removedaccounts     map[int64]struct{}
@@ -35368,6 +35369,42 @@ func (m *ProxyMutation) ResetExpiryWarnDays() {
 	m.addexpiry_warn_days = nil
 }
 
+// SetIsResin sets the "is_resin" field.
+func (m *ProxyMutation) SetIsResin(b bool) {
+	m.is_resin = &b
+}
+
+// IsResin returns the value of the "is_resin" field in the mutation.
+func (m *ProxyMutation) IsResin() (r bool, exists bool) {
+	v := m.is_resin
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsResin returns the old "is_resin" field's value of the Proxy entity.
+// If the Proxy object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProxyMutation) OldIsResin(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsResin is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsResin requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsResin: %w", err)
+	}
+	return oldValue.IsResin, nil
+}
+
+// ResetIsResin resets all changes to the "is_resin" field.
+func (m *ProxyMutation) ResetIsResin() {
+	m.is_resin = nil
+}
+
 // AddAccountIDs adds the "accounts" edge to the Account entity by ids.
 func (m *ProxyMutation) AddAccountIDs(ids ...int64) {
 	if m.accounts == nil {
@@ -35483,7 +35520,7 @@ func (m *ProxyMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ProxyMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, proxy.FieldCreatedAt)
 	}
@@ -35526,6 +35563,9 @@ func (m *ProxyMutation) Fields() []string {
 	if m.expiry_warn_days != nil {
 		fields = append(fields, proxy.FieldExpiryWarnDays)
 	}
+	if m.is_resin != nil {
+		fields = append(fields, proxy.FieldIsResin)
+	}
 	return fields
 }
 
@@ -35562,6 +35602,8 @@ func (m *ProxyMutation) Field(name string) (ent.Value, bool) {
 		return m.BackupProxyID()
 	case proxy.FieldExpiryWarnDays:
 		return m.ExpiryWarnDays()
+	case proxy.FieldIsResin:
+		return m.IsResin()
 	}
 	return nil, false
 }
@@ -35599,6 +35641,8 @@ func (m *ProxyMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldBackupProxyID(ctx)
 	case proxy.FieldExpiryWarnDays:
 		return m.OldExpiryWarnDays(ctx)
+	case proxy.FieldIsResin:
+		return m.OldIsResin(ctx)
 	}
 	return nil, fmt.Errorf("unknown Proxy field %s", name)
 }
@@ -35705,6 +35749,13 @@ func (m *ProxyMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetExpiryWarnDays(v)
+		return nil
+	case proxy.FieldIsResin:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsResin(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Proxy field %s", name)
@@ -35856,6 +35907,9 @@ func (m *ProxyMutation) ResetField(name string) error {
 		return nil
 	case proxy.FieldExpiryWarnDays:
 		m.ResetExpiryWarnDays()
+		return nil
+	case proxy.FieldIsResin:
+		m.ResetIsResin()
 		return nil
 	}
 	return fmt.Errorf("unknown Proxy field %s", name)

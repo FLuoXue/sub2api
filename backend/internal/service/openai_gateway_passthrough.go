@@ -170,7 +170,7 @@ func (s *OpenAIGatewayService) forwardOpenAIPassthrough(
 
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	if c != nil {

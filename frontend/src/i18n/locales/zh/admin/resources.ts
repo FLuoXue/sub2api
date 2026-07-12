@@ -123,6 +123,8 @@ export default {
       host: '主机',
       port: '端口',
       username: '用户名（可选）',
+      isResin: 'Resin 代理',
+      isResinHint: '勾选后，绑定该代理的账号出站认证为 Platform.{账号ID}:TOKEN（如 Default.1）。用户名填写 Platform（默认 Default）。',
       password: '密码（可选）',
       status: '状态',
       enterProxyName: '请输入代理名称',

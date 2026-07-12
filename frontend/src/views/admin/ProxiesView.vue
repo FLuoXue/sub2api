@@ -118,8 +118,15 @@
             />
           </template>
 
-          <template #cell-name="{ value }">
-            <span class="font-medium text-gray-900 dark:text-white">{{ value }}</span>
+          <template #cell-name="{ value, row }">
+            <div class="flex items-center gap-2">
+              <span class="font-medium text-gray-900 dark:text-white">{{ value }}</span>
+              <span
+                v-if="row.is_resin"
+                class="badge badge-primary"
+                :title="t('admin.proxies.isResinHint')"
+              >Resin</span>
+            </div>
           </template>
 
           <template #cell-protocol="{ value }">
@@ -166,7 +173,9 @@
           <template #cell-auth="{ row }">
             <div v-if="row.username || row.password" class="flex items-center gap-1.5">
               <div class="flex flex-col text-xs">
-                <span v-if="row.username" class="text-gray-700 dark:text-gray-200">{{ row.username }}</span>
+                <span v-if="row.username" class="text-gray-700 dark:text-gray-200">
+                  {{ row.is_resin ? `${row.username}.{id}` : row.username }}
+                </span>
                 <span v-if="row.password" class="font-mono text-gray-500 dark:text-gray-400">
                   {{ visiblePasswordIds.has(row.id) ? row.password : '••••••' }}
                 </span>
@@ -471,8 +480,24 @@
             v-model="createForm.username"
             type="text"
             class="input"
-            :placeholder="t('admin.proxies.optionalAuth')"
+            :placeholder="createForm.is_resin ? 'Default' : t('admin.proxies.optionalAuth')"
           />
+        </div>
+        <div class="flex items-start gap-3 rounded-md border border-gray-200 p-3 dark:border-gray-700">
+          <input
+            id="create-is-resin"
+            v-model="createForm.is_resin"
+            type="checkbox"
+            class="mt-1 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+          />
+          <div>
+            <label for="create-is-resin" class="text-sm font-medium text-gray-900 dark:text-gray-100">
+              {{ t('admin.proxies.isResin') }}
+            </label>
+            <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+              {{ t('admin.proxies.isResinHint') }}
+            </p>
+          </div>
         </div>
         <div>
           <label class="input-label">{{ t('admin.proxies.password') }}</label>
@@ -700,7 +725,28 @@
         </div>
         <div>
           <label class="input-label">{{ t('admin.proxies.username') }}</label>
-          <input v-model="editForm.username" type="text" class="input" />
+          <input
+            v-model="editForm.username"
+            type="text"
+            class="input"
+            :placeholder="editForm.is_resin ? 'Default' : undefined"
+          />
+        </div>
+        <div class="flex items-start gap-3 rounded-md border border-gray-200 p-3 dark:border-gray-700">
+          <input
+            id="edit-is-resin"
+            v-model="editForm.is_resin"
+            type="checkbox"
+            class="mt-1 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+          />
+          <div>
+            <label for="edit-is-resin" class="text-sm font-medium text-gray-900 dark:text-gray-100">
+              {{ t('admin.proxies.isResin') }}
+            </label>
+            <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+              {{ t('admin.proxies.isResinHint') }}
+            </p>
+          </div>
         </div>
         <div>
           <label class="input-label">{{ t('admin.proxies.password') }}</label>
@@ -1128,6 +1174,7 @@ const createForm = reactive({
   port: 8080,
   username: '',
   password: '',
+  is_resin: false,
   expires_at: '' as string,
   fallback_mode: 'none' as 'none' | 'proxy' | 'direct',
   backup_proxy_id: null as number | null,
@@ -1141,6 +1188,7 @@ const editForm = reactive({
   port: 8080,
   username: '',
   password: '',
+  is_resin: false,
   status: 'active' as 'active' | 'inactive' | 'expired',
   expires_at: '' as string,
   fallback_mode: 'none' as 'none' | 'proxy' | 'direct',
@@ -1257,6 +1305,7 @@ const closeCreateModal = () => {
   createForm.port = 8080
   createForm.username = ''
   createForm.password = ''
+  createForm.is_resin = false
   createForm.expires_at = ''
   createForm.fallback_mode = 'none'
   createForm.backup_proxy_id = null
@@ -1386,6 +1435,7 @@ const handleCreateProxy = async () => {
       port: createForm.port,
       username: createForm.username.trim() || null,
       password: createForm.password.trim() || null,
+      is_resin: createForm.is_resin,
       expires_at: createForm.expires_at ? Math.floor(new Date(createForm.expires_at).getTime() / 1000) : null,
       fallback_mode: createForm.fallback_mode,
       backup_proxy_id: createForm.fallback_mode === 'proxy' ? createForm.backup_proxy_id : null,
@@ -1410,6 +1460,7 @@ const handleEdit = (proxy: Proxy) => {
   editForm.port = proxy.port
   editForm.username = proxy.username || ''
   editForm.password = proxy.password || ''
+  editForm.is_resin = !!proxy.is_resin
   editForm.status = proxy.status === 'expired' ? 'inactive' : proxy.status
   editForm.expires_at = proxy.expires_at ? proxy.expires_at.slice(0, 10) : ''
   editForm.fallback_mode = proxy.fallback_mode || 'none'
@@ -1450,6 +1501,7 @@ const handleUpdateProxy = async () => {
       host: editForm.host.trim(),
       port: editForm.port,
       username: editForm.username.trim() || null,
+      is_resin: editForm.is_resin,
       status: editForm.status,
       expires_at: editForm.expires_at ? Math.floor(new Date(editForm.expires_at).getTime() / 1000) : null,
       fallback_mode: editForm.fallback_mode,

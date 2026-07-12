@@ -37,6 +37,7 @@ type CreateProxyRequest struct {
 	FallbackMode   string `json:"fallback_mode" binding:"omitempty,oneof=none proxy direct"`
 	BackupProxyID  *int64 `json:"backup_proxy_id"`
 	ExpiryWarnDays int    `json:"expiry_warn_days" binding:"omitempty,min=0"`
+	IsResin        bool   `json:"is_resin"`
 }
 
 // UpdateProxyRequest represents update proxy request
@@ -52,6 +53,7 @@ type UpdateProxyRequest struct {
 	FallbackMode   string `json:"fallback_mode" binding:"omitempty,oneof=none proxy direct"`
 	BackupProxyID  *int64 `json:"backup_proxy_id"`
 	ExpiryWarnDays int    `json:"expiry_warn_days" binding:"omitempty,min=0"`
+	IsResin        *bool  `json:"is_resin"`
 }
 
 // List handles listing all proxies with pagination
@@ -159,6 +161,7 @@ func (h *ProxyHandler) Create(c *gin.Context) {
 			FallbackMode:   strings.TrimSpace(req.FallbackMode),
 			BackupProxyID:  req.BackupProxyID,
 			ExpiryWarnDays: req.ExpiryWarnDays,
+			IsResin:        req.IsResin,
 		})
 		if err != nil {
 			return nil, err
@@ -199,6 +202,7 @@ func (h *ProxyHandler) Update(c *gin.Context) {
 		FallbackMode:   strings.TrimSpace(req.FallbackMode),
 		BackupProxyID:  req.BackupProxyID,
 		ExpiryWarnDays: req.ExpiryWarnDays,
+		IsResin:        req.IsResin,
 	})
 	if err != nil {
 		response.ErrorFrom(c, err)
@@ -333,6 +337,7 @@ type BatchCreateProxyItem struct {
 	Port     int    `json:"port" binding:"required,min=1,max=65535"`
 	Username string `json:"username"`
 	Password string `json:"password"`
+	IsResin  bool   `json:"is_resin"`
 }
 
 // BatchCreateRequest represents batch create proxies request
@@ -379,6 +384,7 @@ func (h *ProxyHandler) BatchCreate(c *gin.Context) {
 			Port:     item.Port,
 			Username: username,
 			Password: password,
+			IsResin:  item.IsResin,
 		})
 		if err != nil {
 			// If creation fails due to duplicate, count as skipped

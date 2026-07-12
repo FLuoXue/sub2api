@@ -64,6 +64,9 @@ func (Proxy) Fields() []ent.Field {
 		field.Int("expiry_warn_days").
 			Default(7).
 			Comment("Days before expiry to flag as expiring-soon (per proxy)."),
+		field.Bool("is_resin").
+			Default(false).
+			Comment("When true, expand username to Platform.{accountID} for Resin sticky IP auth."),
 	}
 }
 

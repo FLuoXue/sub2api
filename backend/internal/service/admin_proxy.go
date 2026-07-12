@@ -81,6 +81,10 @@ func (s *adminServiceImpl) CreateProxy(ctx context.Context, input *CreateProxyIn
 		FallbackMode:   mode,
 		BackupProxyID:  input.BackupProxyID,
 		ExpiryWarnDays: input.ExpiryWarnDays,
+		IsResin:        input.IsResin,
+	}
+	if proxy.IsResin && proxy.Username == "" {
+		proxy.Username = defaultResinPlatform
 	}
 	if err := s.proxyRepo.Create(ctx, proxy); err != nil {
 		return nil, err
@@ -139,6 +143,12 @@ func (s *adminServiceImpl) UpdateProxy(ctx context.Context, id int64, input *Upd
 	proxy.FallbackMode = mode
 	proxy.BackupProxyID = input.BackupProxyID
 	proxy.ExpiryWarnDays = input.ExpiryWarnDays
+	if input.IsResin != nil {
+		proxy.IsResin = *input.IsResin
+	}
+	if proxy.IsResin && proxy.Username == "" {
+		proxy.Username = defaultResinPlatform
+	}
 
 	if err := s.proxyRepo.Update(ctx, proxy); err != nil {
 		return nil, err

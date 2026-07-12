@@ -43,6 +43,8 @@ const (
 	FieldBackupProxyID = "backup_proxy_id"
 	// FieldExpiryWarnDays holds the string denoting the expiry_warn_days field in the database.
 	FieldExpiryWarnDays = "expiry_warn_days"
+	// FieldIsResin holds the string denoting the is_resin field in the database.
+	FieldIsResin = "is_resin"
 	// EdgeAccounts holds the string denoting the accounts edge name in mutations.
 	EdgeAccounts = "accounts"
 	// EdgeBackupProxy holds the string denoting the backup_proxy edge name in mutations.
@@ -79,6 +81,7 @@ var Columns = []string{
 	FieldFallbackMode,
 	FieldBackupProxyID,
 	FieldExpiryWarnDays,
+	FieldIsResin,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -125,6 +128,8 @@ var (
 	FallbackModeValidator func(string) error
 	// DefaultExpiryWarnDays holds the default value on creation for the "expiry_warn_days" field.
 	DefaultExpiryWarnDays int
+	// DefaultIsResin holds the default value on creation for the "is_resin" field.
+	DefaultIsResin bool
 )
 
 // OrderOption defines the ordering options for the Proxy queries.
@@ -203,6 +208,11 @@ func ByBackupProxyID(opts ...sql.OrderTermOption) OrderOption {
 // ByExpiryWarnDays orders the results by the expiry_warn_days field.
 func ByExpiryWarnDays(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldExpiryWarnDays, opts...).ToFunc()
+}
+
+// ByIsResin orders the results by the is_resin field.
+func ByIsResin(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsResin, opts...).ToFunc()
 }
 
 // ByAccountsCount orders the results by accounts count.
