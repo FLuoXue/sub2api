@@ -48,6 +48,7 @@ type DataProxy struct {
 	FallbackMode    string `json:"fallback_mode,omitempty"`     // none/direct/proxy
 	BackupProxyName string `json:"backup_proxy_name,omitempty"` // 备用代理 name（跨实例按 name 反查）
 	ExpiryWarnDays  int    `json:"expiry_warn_days,omitempty"`
+	IsResin         bool   `json:"is_resin,omitempty"`
 }
 
 // DataAccount 是管理员显式备份导出使用的账号结构，故意不走 dto.Account 的脱敏路径，
@@ -182,6 +183,7 @@ func (h *AccountHandler) ExportData(c *gin.Context) {
 			FallbackMode:    p.FallbackMode,
 			BackupProxyName: backupProxyName,
 			ExpiryWarnDays:  p.ExpiryWarnDays,
+			IsResin:         p.IsResin,
 		})
 	}
 
@@ -360,6 +362,7 @@ func (h *AccountHandler) importData(ctx context.Context, req DataImportRequest) 
 			FallbackMode:   fallbackMode,
 			BackupProxyID:  backupProxyID,
 			ExpiryWarnDays: item.ExpiryWarnDays,
+			IsResin:        item.IsResin,
 		})
 		if createErr != nil {
 			result.ProxyFailed++
@@ -380,6 +383,7 @@ func (h *AccountHandler) importData(ctx context.Context, req DataImportRequest) 
 
 		if normalizedStatus != "" && normalizedStatus != created.Status {
 			// 新建后同步 status 时，传入完整字段，避免零值覆盖刚创建的有效期/fallback 配置。
+			isResin := item.IsResin
 			_, _ = h.adminService.UpdateProxy(ctx, created.ID, &service.UpdateProxyInput{
 				Status:         normalizedStatus,
 				ExpiresAt:      expiresAt,
@@ -392,6 +396,7 @@ func (h *AccountHandler) importData(ctx context.Context, req DataImportRequest) 
 				Port:           created.Port,
 				Username:       created.Username,
 				Password:       created.Password,
+				IsResin:        &isResin,
 			})
 		}
 	}

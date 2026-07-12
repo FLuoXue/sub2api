@@ -435,6 +435,7 @@ type CreateProxyInput struct {
 	FallbackMode   string
 	BackupProxyID  *int64
 	ExpiryWarnDays int
+	IsResin        bool
 }
 
 type UpdateProxyInput struct {
@@ -449,6 +450,7 @@ type UpdateProxyInput struct {
 	FallbackMode   string
 	BackupProxyID  *int64
 	ExpiryWarnDays int
+	IsResin        *bool
 }
 
 type GenerateRedeemCodesInput struct {

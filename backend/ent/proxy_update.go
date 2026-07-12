@@ -247,6 +247,20 @@ func (_u *ProxyUpdate) AddExpiryWarnDays(v int) *ProxyUpdate {
 	return _u
 }
 
+// SetIsResin sets the "is_resin" field.
+func (_u *ProxyUpdate) SetIsResin(v bool) *ProxyUpdate {
+	_u.mutation.SetIsResin(v)
+	return _u
+}
+
+// SetNillableIsResin sets the "is_resin" field if the given value is not nil.
+func (_u *ProxyUpdate) SetNillableIsResin(v *bool) *ProxyUpdate {
+	if v != nil {
+		_u.SetIsResin(*v)
+	}
+	return _u
+}
+
 // AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
 func (_u *ProxyUpdate) AddAccountIDs(ids ...int64) *ProxyUpdate {
 	_u.mutation.AddAccountIDs(ids...)
@@ -446,6 +460,9 @@ func (_u *ProxyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AddedExpiryWarnDays(); ok {
 		_spec.AddField(proxy.FieldExpiryWarnDays, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.IsResin(); ok {
+		_spec.SetField(proxy.FieldIsResin, field.TypeBool, value)
 	}
 	if _u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -759,6 +776,20 @@ func (_u *ProxyUpdateOne) AddExpiryWarnDays(v int) *ProxyUpdateOne {
 	return _u
 }
 
+// SetIsResin sets the "is_resin" field.
+func (_u *ProxyUpdateOne) SetIsResin(v bool) *ProxyUpdateOne {
+	_u.mutation.SetIsResin(v)
+	return _u
+}
+
+// SetNillableIsResin sets the "is_resin" field if the given value is not nil.
+func (_u *ProxyUpdateOne) SetNillableIsResin(v *bool) *ProxyUpdateOne {
+	if v != nil {
+		_u.SetIsResin(*v)
+	}
+	return _u
+}
+
 // AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
 func (_u *ProxyUpdateOne) AddAccountIDs(ids ...int64) *ProxyUpdateOne {
 	_u.mutation.AddAccountIDs(ids...)
@@ -988,6 +1019,9 @@ func (_u *ProxyUpdateOne) sqlSave(ctx context.Context) (_node *Proxy, err error)
 	}
 	if value, ok := _u.mutation.AddedExpiryWarnDays(); ok {
 		_spec.AddField(proxy.FieldExpiryWarnDays, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.IsResin(); ok {
+		_spec.SetField(proxy.FieldIsResin, field.TypeBool, value)
 	}
 	if _u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{

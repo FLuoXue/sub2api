@@ -125,6 +125,11 @@ func ExpiryWarnDays(v int) predicate.Proxy {
 	return predicate.Proxy(sql.FieldEQ(FieldExpiryWarnDays, v))
 }
 
+// IsResin applies equality check predicate on the "is_resin" field. It's identical to IsResinEQ.
+func IsResin(v bool) predicate.Proxy {
+	return predicate.Proxy(sql.FieldEQ(FieldIsResin, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Proxy {
 	return predicate.Proxy(sql.FieldEQ(FieldCreatedAt, v))
@@ -888,6 +893,16 @@ func ExpiryWarnDaysLT(v int) predicate.Proxy {
 // ExpiryWarnDaysLTE applies the LTE predicate on the "expiry_warn_days" field.
 func ExpiryWarnDaysLTE(v int) predicate.Proxy {
 	return predicate.Proxy(sql.FieldLTE(FieldExpiryWarnDays, v))
+}
+
+// IsResinEQ applies the EQ predicate on the "is_resin" field.
+func IsResinEQ(v bool) predicate.Proxy {
+	return predicate.Proxy(sql.FieldEQ(FieldIsResin, v))
+}
+
+// IsResinNEQ applies the NEQ predicate on the "is_resin" field.
+func IsResinNEQ(v bool) predicate.Proxy {
+	return predicate.Proxy(sql.FieldNEQ(FieldIsResin, v))
 }
 
 // HasAccounts applies the HasEdge predicate on the "accounts" edge.

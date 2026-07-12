@@ -189,7 +189,7 @@ func vertexServiceAccountProxyURL(account *Account) string {
 	if account == nil || account.ProxyID == nil || account.Proxy == nil {
 		return ""
 	}
-	return account.Proxy.URL()
+	return account.ProxyURL()
 }
 
 func newVertexServiceAccountHTTPClient(proxyURL string) (*http.Client, error) {

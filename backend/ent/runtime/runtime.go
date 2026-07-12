@@ -1587,6 +1587,10 @@ func init() {
 	proxyDescExpiryWarnDays := proxyFields[10].Descriptor()
 	// proxy.DefaultExpiryWarnDays holds the default value on creation for the expiry_warn_days field.
 	proxy.DefaultExpiryWarnDays = proxyDescExpiryWarnDays.Default.(int)
+	// proxyDescIsResin is the schema descriptor for is_resin field.
+	proxyDescIsResin := proxyFields[11].Descriptor()
+	// proxy.DefaultIsResin holds the default value on creation for the is_resin field.
+	proxy.DefaultIsResin = proxyDescIsResin.Default.(bool)
 	redeemcodeFields := schema.RedeemCode{}.Fields()
 	_ = redeemcodeFields
 	// redeemcodeDescCode is the schema descriptor for code field.
