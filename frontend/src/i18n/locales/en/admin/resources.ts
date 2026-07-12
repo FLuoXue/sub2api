@@ -144,6 +144,7 @@ export default {
       host: 'Host',
       port: 'Port',
       username: 'Username (Optional)',
+      usernamePlaceholder: 'Optional, or use <accountid> for account-specific proxy auth',
       password: 'Password (Optional)',
       status: 'Status',
       enterProxyName: 'Enter proxy name',
