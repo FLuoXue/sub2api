@@ -55,7 +55,7 @@ func TestAccountTestService_TestAccountConnection_GrokDefaultsTo45AndUsesXAIResp
 	err := svc.TestAccountConnection(c, account.ID, "", "", AccountTestModeDefault)
 	require.NoError(t, err)
 
-	require.Equal(t, "https://api.x.ai/v1/responses", upstream.lastReq.URL.String())
+	require.Equal(t, "https://cli-chat-proxy.grok.com/v1/responses", upstream.lastReq.URL.String())
 	require.Equal(t, "Bearer grok-access-token", upstream.lastReq.Header.Get("Authorization"))
 	require.Equal(t, grokCLIVersion, upstream.lastReq.Header.Get("X-Grok-Client-Version"))
 	require.Equal(t, "grok-4.5", gjson.GetBytes(upstream.lastBody, "model").String())
