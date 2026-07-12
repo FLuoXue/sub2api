@@ -565,7 +565,7 @@ func (s *GeminiMessagesCompatService) Forward(ctx context.Context, c *gin.Contex
 
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	var requestIDHeader string
@@ -1129,7 +1129,7 @@ func (s *GeminiMessagesCompatService) ForwardNative(ctx context.Context, c *gin.
 
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	useUpstreamStream := stream
@@ -2957,6 +2957,78 @@ func (s *GeminiMessagesCompatService) handleNativeStreamingResponse(c *gin.Conte
 	s.finalizeGeminiSSESignal(c, account, true, upstreamRequestID, best, sawDataEvent, fallback)
 
 	return &geminiNativeStreamResult{usage: usage, firstTokenMs: firstTokenMs, clientDisconnect: clientDisconnect, finished: finished}, nil
+}
+
+// ForwardAIStudioGET forwards a GET request to AI Studio (generativelanguage.googleapis.com) for
+// endpoints like /v1beta/models and /v1beta/models/{model}.
+//
+// This is used to support Gemini SDKs that call models listing endpoints before generation.
+func (s *GeminiMessagesCompatService) ForwardAIStudioGET(ctx context.Context, account *Account, path string) (*UpstreamHTTPResult, error) {
+	if account == nil {
+		return nil, errors.New("account is nil")
+	}
+	// path 会被直接拼到上游 base URL 后面，因此按路径护栏逐片段校验，
+	// 见 upstream_path_guard.go。
+	sanitizedPath, ok := sanitizedUpstreamPathSuffix(path)
+	if !ok || sanitizedPath == "" {
+		return nil, errors.New("invalid path")
+	}
+	path = sanitizedPath
+
+	baseURL := account.GetGeminiBaseURL(geminicli.AIStudioBaseURL)
+	normalizedBaseURL, err := s.validateUpstreamBaseURL(baseURL)
+	if err != nil {
+		return nil, err
+	}
+	fullURL := strings.TrimRight(normalizedBaseURL, "/") + path
+
+	var proxyURL string
+	if account.ProxyID != nil && account.Proxy != nil {
+		proxyURL = account.ProxyURL()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullURL, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	switch account.Type {
+	case AccountTypeAPIKey:
+		apiKey := strings.TrimSpace(account.GetCredential("api_key"))
+		if apiKey == "" {
+			return nil, errors.New("gemini api_key not configured")
+		}
+		req.Header.Set("x-goog-api-key", apiKey)
+	case AccountTypeOAuth:
+		if s.tokenProvider == nil {
+			return nil, errors.New("gemini token provider not configured")
+		}
+		accessToken, err := s.tokenProvider.GetAccessToken(ctx, account)
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Set("Authorization", "Bearer "+accessToken)
+	default:
+		return nil, fmt.Errorf("unsupported account type: %s", account.Type)
+	}
+
+	resp, err := s.httpUpstream.Do(req, proxyURL, account.ID, account.Concurrency)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	body, _ := io.ReadAll(io.LimitReader(resp.Body, 8<<20))
+	wwwAuthenticate := resp.Header.Get("Www-Authenticate")
+	filteredHeaders := responseheaders.FilterHeaders(resp.Header, s.responseHeaderFilter)
+	if wwwAuthenticate != "" {
+		filteredHeaders.Set("Www-Authenticate", wwwAuthenticate)
+	}
+	return &UpstreamHTTPResult{
+		StatusCode: resp.StatusCode,
+		Headers:    filteredHeaders,
+		Body:       body,
+	}, nil
 }
 
 // unwrapGeminiResponse 解包 Gemini OAuth 响应中的 response 字段
