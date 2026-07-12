@@ -447,7 +447,7 @@ func (s *AccountTestService) testClaudeAccountConnection(c *gin.Context, account
 	// Get proxy URL
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	resp, err := s.httpUpstream.DoWithTLS(req, proxyURL, account.ID, account.Concurrency, s.tlsFPProfileService.ResolveTLSProfile(account))
@@ -519,7 +519,7 @@ func (s *AccountTestService) testClaudeVertexServiceAccountConnection(c *gin.Con
 
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	resp, err := s.httpUpstream.DoWithTLS(req, proxyURL, account.ID, account.Concurrency, s.tlsFPProfileService.ResolveTLSProfile(account))
@@ -605,7 +605,7 @@ func (s *AccountTestService) testBedrockAccountConnection(c *gin.Context, ctx co
 
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	resp, err := s.httpUpstream.DoWithTLS(req, proxyURL, account.ID, account.Concurrency, nil)
@@ -795,7 +795,7 @@ func (s *AccountTestService) testOpenAIAccountConnection(c *gin.Context, account
 	// Get proxy URL
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	resp, err := s.doOpenAIAccountTestUpstream(req, proxyURL, account, true)
@@ -1999,7 +1999,7 @@ func (s *AccountTestService) testOpenAIChatCompletionsConnection(
 
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	resp, err := s.httpUpstream.DoWithTLS(req, proxyURL, account.ID, account.Concurrency, s.tlsFPProfileService.ResolveTLSProfile(account))
@@ -2132,7 +2132,7 @@ func (s *AccountTestService) testOpenAICompactConnection(c *gin.Context, account
 
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	resp, err := s.doOpenAIAccountTestUpstream(req, proxyURL, account, true)
@@ -2280,7 +2280,7 @@ func (s *AccountTestService) testGeminiAccountConnection(c *gin.Context, account
 	// Get proxy and execute request
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	resp, err := s.httpUpstream.DoWithTLS(req, proxyURL, account.ID, account.Concurrency, s.tlsFPProfileService.ResolveTLSProfile(account))
@@ -2908,7 +2908,7 @@ func (s *AccountTestService) testOpenAIImageAPIKey(c *gin.Context, ctx context.C
 
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	resp, err := s.httpUpstream.DoWithTLS(req, proxyURL, account.ID, account.Concurrency, s.tlsFPProfileService.ResolveTLSProfile(account))
@@ -3034,7 +3034,7 @@ func (s *AccountTestService) testOpenAIImageOAuth(c *gin.Context, ctx context.Co
 
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 	resp, err := s.doOpenAIAccountTestUpstream(req, proxyURL, account, false)
 	if err != nil {

@@ -611,7 +611,7 @@ func (s *GeminiMessagesCompatService) Forward(ctx context.Context, c *gin.Contex
 
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	var requestIDHeader string
@@ -1176,7 +1176,7 @@ func (s *GeminiMessagesCompatService) ForwardNative(ctx context.Context, c *gin.
 
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	useUpstreamStream := stream
@@ -2826,7 +2826,7 @@ func (s *GeminiMessagesCompatService) ForwardAIStudioGET(ctx context.Context, ac
 
 	var proxyURL string
 	if account.ProxyID != nil && account.Proxy != nil {
-		proxyURL = account.Proxy.URL()
+		proxyURL = account.ProxyURL()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullURL, nil)
