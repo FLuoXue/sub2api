@@ -123,6 +123,7 @@ export default {
       host: '主机',
       port: '端口',
       username: '用户名（可选）',
+      usernamePlaceholder: '可选；使用 <accountid> 可按账号生成代理认证用户名',
       password: '密码（可选）',
       status: '状态',
       enterProxyName: '请输入代理名称',
