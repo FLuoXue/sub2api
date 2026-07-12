@@ -520,11 +520,11 @@ func (s *GrokQuotaService) resolveProxyURL(ctx context.Context, account *Account
 	}
 	switch {
 	case account.Proxy != nil:
-		return account.Proxy.URL()
+		return account.ProxyURL()
 	case s != nil && s.proxyRepo != nil:
 		if proxy, err := s.proxyRepo.GetByID(ctx, *account.ProxyID); err == nil && proxy != nil {
 			account.Proxy = proxy
-			return proxy.URL()
+			return account.ProxyURL()
 		}
 	}
 	return ""
