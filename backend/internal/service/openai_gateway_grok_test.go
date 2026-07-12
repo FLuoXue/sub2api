@@ -653,12 +653,12 @@ func TestForwardAsChatCompletionsForGrokUsesXAIChatCompletionsAndSnapshots(t *te
 	require.Equal(t, http.StatusOK, recorder.Code)
 }
 
-func TestForwardGrokResponsesStreamingUsesXAIResponsesAndSnapshots(t *testing.T) {
+func TestForwardGrokResponsesStreamingDefaultsEmptyModelTo45AndSnapshots(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	recorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(recorder)
-	body := []byte(`{"model":"grok","input":"hi","stream":true}`)
+	body := []byte(`{"input":"hi","stream":true}`)
 	c.Request = httptest.NewRequest(http.MethodPost, "/v1/responses", bytes.NewReader(body))
 	c.Request.Header.Set("Content-Type", "application/json")
 	c.Request.Header.Set("OpenAI-Beta", "responses=experimental")
@@ -704,7 +704,7 @@ func TestForwardGrokResponsesStreamingUsesXAIResponsesAndSnapshots(t *testing.T)
 		accountRepo:       repo,
 	}
 
-	result, err := svc.forwardGrokResponses(context.Background(), c, account, body, "grok", true, time.Now())
+	result, err := svc.forwardGrokResponses(context.Background(), c, account, body, "", true, time.Now())
 	require.NoError(t, err)
 	require.Equal(t, xai.DefaultCLIBaseURL+"/responses", upstream.lastReq.URL.String())
 	require.Equal(t, "Bearer access-token", upstream.lastReq.Header.Get("Authorization"))
