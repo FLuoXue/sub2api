@@ -145,7 +145,7 @@ export default {
       port: 'Port',
       username: 'Username (Optional)',
       isResin: 'Resin proxy',
-      isResinHint: 'When enabled, outbound auth becomes Platform.{accountID}:TOKEN (e.g. Default.1). Username is the Platform (default Default).',
+      isResinHint: 'When enabled, outbound auth becomes Platform.<accountID>:TOKEN (e.g. Default.1). Username is the Platform (default Default).',
       password: 'Password (Optional)',
       status: 'Status',
       enterProxyName: 'Enter proxy name',
