@@ -637,30 +637,60 @@ func (s *UpdateService) saveToCache(ctx context.Context, info *UpdateInfo) {
 	_ = s.cache.SetUpdateInfo(ctx, string(data), time.Duration(updateCacheTTL)*time.Second)
 }
 
-// compareVersions compares two semantic versions
+// compareVersions compares two semantic versions.
+// Supports fork patch segments beyond major.minor.patch (e.g. 0.1.153.1 < 0.1.153.2).
+// Non-numeric suffixes (e.g. -rc1) are truncated at the first non-integer segment.
 func compareVersions(current, latest string) int {
 	currentParts := parseVersion(current)
 	latestParts := parseVersion(latest)
-
-	for i := 0; i < 3; i++ {
-		if currentParts[i] < latestParts[i] {
+	n := len(currentParts)
+	if len(latestParts) > n {
+		n = len(latestParts)
+	}
+	for i := 0; i < n; i++ {
+		c, l := 0, 0
+		if i < len(currentParts) {
+			c = currentParts[i]
+		}
+		if i < len(latestParts) {
+			l = latestParts[i]
+		}
+		if c < l {
 			return -1
 		}
-		if currentParts[i] > latestParts[i] {
+		if c > l {
 			return 1
 		}
 	}
 	return 0
 }
 
-func parseVersion(v string) [3]int {
-	v = strings.TrimPrefix(v, "v")
+func parseVersion(v string) []int {
+	v = strings.TrimPrefix(strings.TrimSpace(v), "v")
+	if v == "" {
+		return []int{0}
+	}
+	// Strip pre-release / build metadata so "0.1.153-rc1" compares as 0.1.153.
+	if i := strings.IndexAny(v, "-+"); i >= 0 {
+		v = v[:i]
+	}
 	parts := strings.Split(v, ".")
-	result := [3]int{0, 0, 0}
-	for i := 0; i < len(parts) && i < 3; i++ {
-		if parsed, err := strconv.Atoi(parts[i]); err == nil {
-			result[i] = parsed
+	result := make([]int, 0, len(parts))
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			result = append(result, 0)
+			continue
 		}
+		parsed, err := strconv.Atoi(part)
+		if err != nil {
+			// Stop at first non-numeric segment to keep comparison stable.
+			break
+		}
+		result = append(result, parsed)
+	}
+	if len(result) == 0 {
+		return []int{0}
 	}
 	return result
 }
