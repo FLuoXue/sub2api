@@ -176,7 +176,7 @@ func (s *GrokOAuthService) ValidateRefreshToken(ctx context.Context, refreshToke
 }
 
 func (s *GrokOAuthService) ConvertFromSSO(ctx context.Context, ssoToken string, proxyID *int64) (*GrokTokenInfo, error) {
-	proxyURL, err := s.proxyURL(ctx, proxyID)
+	proxyURL, err := s.proxyURL(ctx, proxyID, 0)
 	if err != nil {
 		return nil, err
 	}
