@@ -185,3 +185,37 @@ func TestUpdateServiceRollbackToVersionAcceptsVPrefix(t *testing.T) {
 	require.NotErrorIs(t, err, ErrRollbackVersionNotAllowed)
 	require.Contains(t, err.Error(), "no compatible release found")
 }
+
+func TestCompareVersionsSupportsForkPatchSegments(t *testing.T) {
+	t.Parallel()
+
+	require.Equal(t, -1, compareVersions("0.1.153.1", "0.1.153.2"))
+	require.Equal(t, 1, compareVersions("0.1.153.2", "0.1.153.1"))
+	require.Equal(t, 0, compareVersions("0.1.153.2", "0.1.153.2"))
+	require.Equal(t, -1, compareVersions("0.1.153", "0.1.153.1"))
+	require.Equal(t, 1, compareVersions("0.1.153.1", "0.1.153"))
+	require.Equal(t, -1, compareVersions("0.1.152", "0.1.153.1"))
+	require.Equal(t, 0, compareVersions("v0.1.153.2", "0.1.153.2"))
+}
+
+func TestCheckUpdateDetectsFourPartNewerRelease(t *testing.T) {
+	t.Parallel()
+
+	svc := NewUpdateService(
+		&updateServiceCacheStub{},
+		&updateServiceGitHubClientStub{
+			release: &GitHubRelease{
+				TagName: "v0.1.153.2",
+				Name:    "v0.1.153.2",
+			},
+		},
+		"0.1.153.1",
+		"release",
+	)
+
+	info, err := svc.CheckUpdate(context.Background(), true)
+	require.NoError(t, err)
+	require.True(t, info.HasUpdate)
+	require.Equal(t, "0.1.153.1", info.CurrentVersion)
+	require.Equal(t, "0.1.153.2", info.LatestVersion)
+}
