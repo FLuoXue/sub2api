@@ -94,7 +94,7 @@ type GrokRefreshTokenRequest struct {
 	ClientID     string `json:"client_id"`
 	ProxyID      *int64 `json:"proxy_id"`
 	// AccountID enables Resin sticky IP when refreshing for a bound account.
-	AccountID    *int64 `json:"account_id"`
+	AccountID *int64 `json:"account_id"`
 }
 
 func (h *GrokOAuthHandler) RefreshToken(c *gin.Context) {
@@ -265,7 +265,6 @@ func (h *GrokOAuthHandler) CreateAccountFromOAuth(c *gin.Context) {
 		response.ErrorFrom(c, err)
 		return
 	}
-	h.scheduleGrokImportProbe(account)
 	response.Success(c, dto.AccountFromService(account))
 }
 
@@ -401,7 +400,6 @@ func (h *GrokOAuthHandler) createAccountFromSSOToken(ctx context.Context, req Gr
 	if err != nil {
 		return grokSSOImportWorkerResult{item: GrokSSOToOAuthItemResult{Index: index, Name: name, Email: tokenInfo.Email, Error: grokSSOImportErrorMessage(err)}}
 	}
-	h.scheduleGrokImportProbe(account)
 	return grokSSOImportWorkerResult{
 		created: true,
 		item: GrokSSOToOAuthItemResult{
