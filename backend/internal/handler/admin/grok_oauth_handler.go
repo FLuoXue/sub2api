@@ -97,6 +97,8 @@ type GrokRefreshTokenRequest struct {
 	RT           string `json:"rt"`
 	ClientID     string `json:"client_id"`
 	ProxyID      *int64 `json:"proxy_id"`
+	// AccountID enables Resin sticky IP when refreshing for a bound account.
+	AccountID    *int64 `json:"account_id"`
 }
 
 type GrokSSOTokenRequest struct {
@@ -128,9 +130,17 @@ func (h *GrokOAuthHandler) RefreshToken(c *gin.Context) {
 	var proxyURL string
 	if req.ProxyID != nil {
 		proxy, err := h.adminService.GetProxy(c.Request.Context(), *req.ProxyID)
+		if err == nil && proxy != nil {
+			accountID := int64(0)
+			if req.AccountID != nil {
+				accountID = *req.AccountID
+			}
+			proxyURL = proxy.URLForAccount(accountID)
+		}
 		if err != nil {
 			response.ErrorFrom(c, err)
 			return
+		}
 		}
 		if proxy == nil {
 			response.BadRequest(c, "GROK_OAUTH_PROXY_NOT_FOUND: proxy not found")
