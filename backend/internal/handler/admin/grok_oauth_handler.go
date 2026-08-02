@@ -98,7 +98,7 @@ type GrokRefreshTokenRequest struct {
 	ClientID     string `json:"client_id"`
 	ProxyID      *int64 `json:"proxy_id"`
 	// AccountID enables Resin sticky IP when refreshing for a bound account.
-	AccountID    *int64 `json:"account_id"`
+	AccountID *int64 `json:"account_id"`
 }
 
 type GrokSSOTokenRequest struct {
